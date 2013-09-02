@@ -1,5 +1,5 @@
 {
-    "name": "nubera-ebusiness/intercom-php",
+    "name": "VladaPetrovic/intercom-php",
     "version": "0.1.1",
     "type": "library",
     "description": "Connectivity with the Intercom API",
@@ -16,5 +16,8 @@
     ],
     "require": {
         "php": ">=5.3.0"
+    },
+    "autoload": {
+        "classmap": ["."]
     }
 }
