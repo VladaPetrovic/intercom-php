@@ -258,7 +258,7 @@ class Intercom
      * @param  long   $lastRequestAt     UNIX timestamp of the user's last request (optional)
      * @return object
      **/
-    public function updateUser($id,
+    public function updateUser($id = null,
                                $email = null,
                                $name = null,
                                $customData = array(),
