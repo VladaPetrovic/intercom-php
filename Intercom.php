@@ -194,6 +194,7 @@ class Intercom
      * @param  string $lastSeenIp        The last IP address where the user was last seen (optional)
      * @param  string $lastSeenUserAgent The last user agent of the user's browser (optional)
      * @param  long   $lastRequestAt     UNIX timestamp of the user's last request (optional)
+     * @param  array  $increments        Any increments data to be aggregate to the user's record (optional)
      * @param  string $method            HTTP method, to be used by updateUser()
      * @return object
      **/
@@ -205,6 +206,7 @@ class Intercom
                                $lastSeenIp = null,
                                $lastSeenUserAgent = null,
                                $lastRequestAt = null,
+                               $increments = null,
                                $method = 'POST')
     {
         $data = array();
@@ -239,6 +241,10 @@ class Intercom
 
         if (!empty($customData)) {
             $data['custom_data'] = $customData;
+        }
+
+        if (!empty($increments)) {
+            $data['increments'] = $increments;
         }
 
         $path = 'users';
