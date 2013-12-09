@@ -116,7 +116,7 @@ class Intercom
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 600); //Intercom doesn't support pagination, some calls are slow
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         curl_setopt($ch, CURLOPT_USERPWD, $this->appId . ':' . $this->apiKey);
 
@@ -270,9 +270,10 @@ class Intercom
                                $createdAt = null,
                                $lastSeenIp = null,
                                $lastSeenUserAgent = null,
-                               $lastRequestAt = null)
+                               $lastRequestAt = null,
+                               $increments = null)
     {
-        return $this->createUser($id, $email, $name, $customData, $createdAt, $lastSeenIp, $lastSeenUserAgent, $lastRequestAt, 'PUT');
+        return $this->createUser($id, $email, $name, $customData, $createdAt, $lastSeenIp, $lastSeenUserAgent, $lastRequestAt, $increments, 'PUT');
     }
 
     /**
