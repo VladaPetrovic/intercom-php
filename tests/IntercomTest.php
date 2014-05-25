@@ -128,4 +128,26 @@ class IntercomTest extends PHPUnit_Framework_TestCase
       $this->assertEmpty($res);
       $this->assertEquals(202, $lastError['httpCode']);
     }
+
+    public function testCreateNote()
+    {
+        $userId = 'userId001';
+        $email = 'email@example.com';
+        $body = 'This is the text of my note.';
+        $res = $this->service->createNote($userId, $email, $body);
+        $lastError = $this->service->getLastError();
+
+        $this->assertTrue(is_object($res), $lastError['code'] . ': ' . $lastError['message']);
+
+        // Test note is created
+        $this->assertObjectHasAttribute('html', $res);
+        $this->assertEquals('<p>' . $body . '</p>', $res->html);
+
+        // Test user object is OK
+        $this->assertObjectHasAttribute('user', $res);
+        $this->assertObjectHasAttribute('email', $res->user);
+        $this->assertEquals($email, $res->user->email);
+        $this->assertObjectHasAttribute('user_id', $res->user);
+        $this->assertEquals($userId, $res->user->user_id);
+    }
 }
