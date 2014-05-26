@@ -495,5 +495,32 @@ class Intercom
         return $this->createTag($name, $emails, $userIds, $color, $action, 'PUT');
 
     }
+
+    /**
+     * Adds a note to a user of your application.
+     *
+     * @param  string $userId
+     * @param  string $email
+     * @param  string $body
+     * @return object
+     **/
+    public function createNote($userId,
+                               $email = null,
+                               $body)
+    {
+        $data = array();
+
+        $data['user_id'] = $userId;
+
+        if (!empty($email)) {
+            $data['email'] = $email;
+        }
+
+        $data['body'] = $body;
+
+        $path = 'users/notes';
+
+        return $this->httpCall($this->apiEndpoint . $path, 'POST', json_encode($data));
+    }
 }
 ?>
