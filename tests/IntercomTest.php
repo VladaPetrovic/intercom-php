@@ -17,7 +17,8 @@ class IntercomTest extends PHPUnit_Framework_TestCase
                              'getUser',
                              'updateUser',
                              'createImpression',
-                             'createEvent');
+                             'createEvent',
+                             'createNote');
             foreach ($methods as $method) {
                 $this->service->expects($this->any())
                               ->method($method)
