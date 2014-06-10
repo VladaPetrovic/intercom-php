@@ -222,6 +222,7 @@ class Intercom
      * @param  string $email                  The user's email address (optional)
      * @param  string $name                   The user's name (optional)
      * @param  array  $customData             Any custom data to be aggregate to the user's record (optional)
+     * @param  array  $company                Data of the user's company (optional)
      * @param  long   $createdAt              UNIX timestamp describing the date and time when the user was created (optional)
      * @param  string $lastSeenIp             The last IP address where the user was last seen (optional)
      * @param  string $lastSeenUserAgent      The last user agent of the user's browser (optional)
@@ -235,6 +236,7 @@ class Intercom
                                $email = null,
                                $name = null,
                                $customData = array(),
+                               $company = null,
                                $createdAt = null,
                                $lastSeenIp = null,
                                $lastSeenUserAgent = null,
@@ -275,6 +277,10 @@ class Intercom
             $data['custom_data'] = $customData;
         }
 
+        if (!empty($company)) {
+            $data['company'] = $company;
+        }
+        
         if (is_bool($unsubscribedFromEmails)) {
             $data['unsubscribed_from_emails'] = $unsubscribedFromEmails;
         }
@@ -292,6 +298,7 @@ class Intercom
      * @param  string $email                  The user's email address (optional)
      * @param  string $name                   The user's name (optional)
      * @param  array  $customData             Any custom data to be aggregate to the user's record (optional)
+     * @param  array  $company                Data of the user's company (optional)
      * @param  long   $createdAt              UNIX timestamp describing the date and time when the user was created (optional)
      * @param  string $lastSeenIp             The last IP address where the user was last seen (optional)
      * @param  string $lastSeenUserAgent      The last user agent of the user's browser (optional)
@@ -304,6 +311,7 @@ class Intercom
                                $email = null,
                                $name = null,
                                $customData = array(),
+                               $company = null,
                                $createdAt = null,
                                $lastSeenIp = null,
                                $lastSeenUserAgent = null,
@@ -312,7 +320,7 @@ class Intercom
                                $increments = array()
                                )
     {
-        return $this->createUser($id, $email, $name, $customData, $createdAt, $lastSeenIp, $lastSeenUserAgent, $lastRequestAt, $unsubscribedFromEmails, 'PUT', $increments);
+        return $this->createUser($id, $email, $name, $customData, $company, $createdAt, $lastSeenIp, $lastSeenUserAgent, $lastRequestAt, $unsubscribedFromEmails, 'PUT', $increments);
     }
 
     /**
