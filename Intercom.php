@@ -222,7 +222,6 @@ class Intercom
      * @param  string $email                  The user's email address (optional)
      * @param  string $name                   The user's name (optional)
      * @param  array  $customData             Any custom data to be aggregate to the user's record (optional)
-     * @param  array  $company                Data of the user's company (optional)
      * @param  long   $createdAt              UNIX timestamp describing the date and time when the user was created (optional)
      * @param  string $lastSeenIp             The last IP address where the user was last seen (optional)
      * @param  string $lastSeenUserAgent      The last user agent of the user's browser (optional)
@@ -230,20 +229,21 @@ class Intercom
      * @param  bool   $unsubscribedFromEmails The user's email subscription status (optional)
      * @param  string $method                 HTTP method, to be used by updateUser()
      * @param  array  $increments             Any custom data(integer) to be increased/decreased (optional)
+     * @param  array  $company                Data of the user's company (optional)
      * @return object
      **/
     public function createUser($id,
                                $email = null,
                                $name = null,
                                $customData = array(),
-                               $company = null,
                                $createdAt = null,
                                $lastSeenIp = null,
                                $lastSeenUserAgent = null,
                                $lastRequestAt = null,
                                $unsubscribedFromEmails = null,
                                $method = 'POST',
-                               $increments = array())
+                               $increments = array(),
+                               $company = null)
     {
         $data = array();
 
@@ -277,16 +277,17 @@ class Intercom
             $data['custom_data'] = $customData;
         }
 
-        if (!empty($company)) {
-            $data['company'] = $company;
-        }
-        
         if (is_bool($unsubscribedFromEmails)) {
             $data['unsubscribed_from_emails'] = $unsubscribedFromEmails;
         }
         if (!empty($increments)) {
          	$data['increments'] = $increments;
         }
+        
+        if (!empty($company)) {
+            $data['company'] = $company;
+        }
+        
         $path = 'users';
         return $this->httpCall($this->apiEndpoint . $path, $method, json_encode($data));
     }
@@ -298,29 +299,28 @@ class Intercom
      * @param  string $email                  The user's email address (optional)
      * @param  string $name                   The user's name (optional)
      * @param  array  $customData             Any custom data to be aggregate to the user's record (optional)
-     * @param  array  $company                Data of the user's company (optional)
      * @param  long   $createdAt              UNIX timestamp describing the date and time when the user was created (optional)
      * @param  string $lastSeenIp             The last IP address where the user was last seen (optional)
      * @param  string $lastSeenUserAgent      The last user agent of the user's browser (optional)
      * @param  long   $lastRequestAt          UNIX timestamp of the user's last request (optional)
      * @param  bool   $unsubscribedFromEmails The user's email subscription status (optional)
      * @param  array  $increments             Any custom data(integer) to be increased/decreased (optional)
+     * @param  array  $company                Data of the user's company (optional)
      * @return object
      **/
     public function updateUser($id,
                                $email = null,
                                $name = null,
                                $customData = array(),
-                               $company = null,
                                $createdAt = null,
                                $lastSeenIp = null,
                                $lastSeenUserAgent = null,
                                $lastRequestAt = null,
                                $unsubscribedFromEmails = null,
-                               $increments = array()
-                               )
+                               $increments = array(),
+                               $company = null)
     {
-        return $this->createUser($id, $email, $name, $customData, $company, $createdAt, $lastSeenIp, $lastSeenUserAgent, $lastRequestAt, $unsubscribedFromEmails, 'PUT', $increments);
+        return $this->createUser($id, $email, $name, $customData, $createdAt, $lastSeenIp, $lastSeenUserAgent, $lastRequestAt, $unsubscribedFromEmails, 'PUT', $increments, $company);
     }
 
     /**
