@@ -229,6 +229,7 @@ class Intercom
      * @param  bool   $unsubscribedFromEmails The user's email subscription status (optional)
      * @param  string $method                 HTTP method, to be used by updateUser()
      * @param  array  $increments             Any custom data(integer) to be increased/decreased (optional)
+     * @param  array  $company                Data of the user's company (optional)
      * @return object
      **/
     public function createUser($id,
@@ -241,7 +242,8 @@ class Intercom
                                $lastRequestAt = null,
                                $unsubscribedFromEmails = null,
                                $method = 'POST',
-                               $increments = array())
+                               $increments = array(),
+                               $company = null)
     {
         $data = array();
 
@@ -281,6 +283,11 @@ class Intercom
         if (!empty($increments)) {
          	$data['increments'] = $increments;
         }
+        
+        if (!empty($company)) {
+            $data['company'] = $company;
+        }
+        
         $path = 'users';
         return $this->httpCall($this->apiEndpoint . $path, $method, json_encode($data));
     }
@@ -298,6 +305,7 @@ class Intercom
      * @param  long   $lastRequestAt          UNIX timestamp of the user's last request (optional)
      * @param  bool   $unsubscribedFromEmails The user's email subscription status (optional)
      * @param  array  $increments             Any custom data(integer) to be increased/decreased (optional)
+     * @param  array  $company                Data of the user's company (optional)
      * @return object
      **/
     public function updateUser($id,
@@ -309,10 +317,10 @@ class Intercom
                                $lastSeenUserAgent = null,
                                $lastRequestAt = null,
                                $unsubscribedFromEmails = null,
-                               $increments = array()
-                               )
+                               $increments = array(),
+                               $company = null)
     {
-        return $this->createUser($id, $email, $name, $customData, $createdAt, $lastSeenIp, $lastSeenUserAgent, $lastRequestAt, $unsubscribedFromEmails, 'PUT', $increments);
+        return $this->createUser($id, $email, $name, $customData, $createdAt, $lastSeenIp, $lastSeenUserAgent, $lastRequestAt, $unsubscribedFromEmails, 'PUT', $increments, $company);
     }
 
     /**
