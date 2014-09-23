@@ -115,9 +115,8 @@ class Intercom
         }
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_BUFFERSIZE, 4096);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 600); //Intercom doesn't support pagination, some calls are slow
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
         curl_setopt($ch, CURLOPT_USERPWD, $this->appId . ':' . $this->apiKey);
 
@@ -232,7 +231,7 @@ class Intercom
      * @param  array  $company                Data of the user's company (optional)
      * @return object
      **/
-    public function createUser($id,
+    public function createUser($id = null,
                                $email = null,
                                $name = null,
                                $customData = array(),
@@ -247,7 +246,9 @@ class Intercom
     {
         $data = array();
 
-        $data['user_id'] = $id;
+        if (!empty($id)) {
+            $data['user_id'] = $id;
+        }
 
         if (!empty($email)) {
             $data['email'] = $email;
@@ -308,7 +309,7 @@ class Intercom
      * @param  array  $company                Data of the user's company (optional)
      * @return object
      **/
-    public function updateUser($id,
+    public function updateUser($id = null,
                                $email = null,
                                $name = null,
                                $customData = array(),
