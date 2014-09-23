@@ -1,20 +1,54 @@
 <?php
-require_once 'Intercom.php';
-
 class IntercomTest extends PHPUnit_Framework_TestCase
 {
+    protected $service;
+
+    protected function setUp()
+    {
+        if ($GLOBALS['integrationTests']) {
+            $this->service = new Intercom($GLOBALS['appId'],
+                                          $GLOBALS['apiKey']);
+        } else {
+            $this->service = $this->getMockBuilder('Intercom')
+                                  ->disableOriginalConstructor()
+                                  ->getMock();
+            $methods = array('getAllUsers',
+                             'createUser',
+                             'getUser',
+                             'updateUser',
+                             'createImpression',
+                             'createEvent',
+                             'createNote');
+            foreach ($methods as $method) {
+                $this->service->expects($this->any())
+                              ->method($method)
+                              ->will($this->returnValue(
+                                     json_decode(
+                                        file_get_contents('tests/mocks/' . $method . '.mock')
+                                     )
+                                ));
+            }
+            $this->service->expects($this->any())
+                          ->method('getLastError')
+                          ->will($this->returnValue(
+                                 json_decode(
+                                    file_get_contents('tests/mocks/getLastError.mock')
+                                    , true
+                                 )
+                            ));
+        }
+    }
+
     public function testGetAllUsers()
     {
-        $intercom = new Intercom('dummy-app-id', 'dummy-api-key');
-
-        $users = $intercom->getAllUsers(1, 1);
+        $users = $this->service->getAllUsers(1, 1);
 
         // Retry if failing on the first attempt.
         if (!is_object($users)) {
-            $users = $intercom->getAllUsers(1, 1);
+            $users = $this->service->getAllUsers(1, 1);
         }
 
-        $lastError = $intercom->getLastError();
+        $lastError = $this->service->getLastError();
 
         $this->assertTrue(is_object($users), $lastError['code'] . ': ' . $lastError['message']);
         $this->assertObjectHasAttribute('users', $users);
@@ -25,12 +59,10 @@ class IntercomTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateUser()
     {
-        $intercom = new Intercom('dummy-app-id', 'dummy-api-key');
-
         $userId = 'userId001';
         $email = 'email@example.com';
-        $res = $intercom->createUser('userId001', $email);
-        $lastError = $intercom->getLastError();
+        $res = $this->service->createUser('userId001', $email);
+        $lastError = $this->service->getLastError();
 
         $this->assertTrue(is_object($res), $lastError['code'] . ': ' . $lastError['message']);
         $this->assertObjectHasAttribute('email', $res);
@@ -44,10 +76,8 @@ class IntercomTest extends PHPUnit_Framework_TestCase
      */
     public function testGetUser()
     {
-        $intercom = new Intercom('dummy-app-id', 'dummy-api-key');
-
-        $res = $intercom->getUser('userId001');
-        $lastError = $intercom->getLastError();
+        $res = $this->service->getUser('userId001');
+        $lastError = $this->service->getLastError();
 
         $this->assertTrue(is_object($res), $lastError['code'] . ': ' . $lastError['message']);
         $this->assertObjectHasAttribute('email', $res);
@@ -59,12 +89,10 @@ class IntercomTest extends PHPUnit_Framework_TestCase
      */
     public function testUpdateUser()
     {
-        $intercom = new Intercom('dummy-app-id', 'dummy-api-key');
-
         $userId = 'userId001';
         $email = 'new+email@example.com';
-        $res = $intercom->updateUser('userId001', $email);
-        $lastError = $intercom->getLastError();
+        $res = $this->service->updateUser('userId001', $email);
+        $lastError = $this->service->getLastError();
 
         $this->assertTrue(is_object($res), $lastError['code'] . ': ' . $lastError['message']);
         $this->assertObjectHasAttribute('email', $res);
@@ -78,13 +106,49 @@ class IntercomTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateImpression()
     {
-        $intercom = new Intercom('dummy-app-id', 'dummy-api-key');
-
-        $res = $intercom->createImpression('userId001');
-        $lastError = $intercom->getLastError();
+        $res = $this->service->createImpression('userId001');
+        $lastError = $this->service->getLastError();
 
         $this->assertTrue(is_object($res), $lastError['code'] . ': ' . $lastError['message']);
         $this->assertObjectHasAttribute('unread_messages', $res);
     }
+
+    /**
+     * @depends testCreateUser
+     */
+    public function testCreateEvent()
+    {
+      $userId = 'userId001';
+      $email = 'email@example.com';
+      $eventName = 'test_event';
+      $metadata = array('test_meta' => 'test_value');
+
+      $res = $this->service->createEvent($userId, $eventName, $metadata, $email);
+      $lastError = $this->service->getLastError();
+
+      $this->assertEmpty($res);
+      $this->assertEquals(202, $lastError['httpCode']);
+    }
+
+    public function testCreateNote()
+    {
+        $userId = 'userId001';
+        $email = 'email@example.com';
+        $body = 'This is the text of my note.';
+        $res = $this->service->createNote($userId, $email, $body);
+        $lastError = $this->service->getLastError();
+
+        $this->assertTrue(is_object($res), $lastError['code'] . ': ' . $lastError['message']);
+
+        // Test note is created
+        $this->assertObjectHasAttribute('html', $res);
+        $this->assertEquals('<p>' . $body . '</p>', $res->html);
+
+        // Test user object is OK
+        $this->assertObjectHasAttribute('user', $res);
+        $this->assertObjectHasAttribute('email', $res->user);
+        $this->assertEquals($email, $res->user->email);
+        $this->assertObjectHasAttribute('user_id', $res->user);
+        $this->assertEquals($userId, $res->user->user_id);
+    }
 }
-?>

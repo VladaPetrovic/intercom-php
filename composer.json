@@ -1,6 +1,6 @@
 {
     "name": "VladaPetrovic/intercom-php",
-    "version": "0.1.1",
+    "version": "0.1.9",
     "type": "library",
     "description": "Connectivity with the Intercom API",
     "keywords": ["intercom","api"],
@@ -18,6 +18,9 @@
         "php": ">=5.3.0"
     },
     "autoload": {
-        "classmap": ["."]
+        "classmap": ["Intercom.php"]
+    },
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*"
     }
 }
