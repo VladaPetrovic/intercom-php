@@ -520,13 +520,15 @@ class Intercom
      * @param  string $body
      * @return object
      **/
-    public function createNote($userId,
+    public function createNote($userId = null,
                                $email = null,
                                $body)
     {
         $data = array();
 
-        $data['user_id'] = $userId;
+        if (!empty($userId)) {
+            $data['user_id'] = $userId;
+        }
 
         if (!empty($email)) {
             $data['email'] = $email;
